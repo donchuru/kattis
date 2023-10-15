@@ -26,7 +26,6 @@
 """
 
 from collections import defaultdict
-from collections import deque
 from heapq import heappop, heappush
 
 n, m = map(int, input().split())
@@ -50,7 +49,7 @@ def dijkstra(graph, island):
 
     q = []
     heappush(q, (armies[island], island))
-    i = 0
+    i = 0 # we wanna make sure our island '1' is conquered
 
     while q:
         army_size, curr_island = heappop(q)
@@ -59,14 +58,16 @@ def dijkstra(graph, island):
             conquered.add(curr_island)
             army_sf += army_size
         else:
-            continue
+            continue # so that we dont expand the neighbours of a node we didn't conquer
 
         for nb in graph[curr_island]:
             if nb not in conquered:
+                # let it sit in the queue for processing (to see if we can conquer it)
                 heappush(q, (armies[nb], nb))
                 conquered.add(nb)
 
         i += 1
+        
     return army_sf
 
 print(dijkstra(graph, '1'))
