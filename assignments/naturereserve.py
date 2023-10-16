@@ -1,12 +1,12 @@
 from heapq import heappush, heappop
 from sys import stdin, stdout
 
+input = stdin.readline
 ds = int(input())
 
-def prims(graph, sources):
+def prims(graph, source):
     q = []
-    for source in sources:
-        heappush(q, (0, source) )
+    heappush( q, (0, source) )
 
     taken = set()
     activate = 0
@@ -15,19 +15,21 @@ def prims(graph, sources):
     while q:
         w, v = heappop(q)
 
-        if v not in taken:
-            activate += w
-            tracker += 1
-            taken.add(v)
+        if v in taken:
+            continue
 
-            for nb in range(len(graph[v - 1])):
-                if (graph[v - 1][nb] != -1) and ((nb + 1) not in taken):
-                    heappush( q, (graph[v - 1][nb], (nb + 1)) )
+        activate += w
+        tracker += 1
+        taken.add(v)
+
+        for nb in range(len(graph[v - 1])):
+            if (graph[v - 1][nb] != -1) and ((nb + 1) not in taken):
+                heappush( q, (graph[v - 1][nb], (nb + 1)) )
                     
     return (activate, tracker)
 
-
 for i in range(ds):
+    input = stdin.readline
     n, m, l, s = map(int, input().split())
 
     sources = list(map(int, input().split()))
@@ -45,6 +47,13 @@ for i in range(ds):
         graph[u -1][v - 1] = w
         graph[v -1][u - 1] = w
 
-    activate, tracker = prims(graph, sources)
+    total_energy = 0
 
-    print(activate + ((tracker-1) * 10))
+    for source in sources:
+        activate, tracker = prims(graph, source)
+        # print("activate", activate)
+        # print("tracker", tracker)
+        total_energy += (activate + ((tracker-1) * l))
+    
+
+    stdout.write(str(total_energy))
