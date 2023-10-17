@@ -31,21 +31,16 @@ using namespace std;
 typedef long long ll;
 typedef pair<ll, ll> tup;
 
-tup prims(vector<vector<ll>>&graph, ll source){
+tup prims(vector<vector<tup>>&graph, ll common_source){
 
     // make it min heap
-    struct CompareWeights {
-        bool operator()(const tup& a, const tup& b) {
-            return a.first > b.first;
-        }
-    };
-    priority_queue<tup, vector<tup>, CompareWeights> pq;
+    priority_queue<tup, vector<tup>, greater<tup>> pq;
 
-    pq.push({0, source});
+    pq.push({0, common_source});
 
     vector<bool> taken(graph.size(), false);
     ll activate = 0;
-    ll tracker = 0;
+    ll tracker = -1; // cause we have extra common node btwn all sources from where we start the domino effect
 
     while (!pq.empty()) {
         ll w = pq.top().first;
@@ -60,14 +55,14 @@ tup prims(vector<vector<ll>>&graph, ll source){
         tracker++;
         taken[v - 1] = true;
 
-        for (ll nb = 0; nb < graph[v - 1].size(); nb++){
-            if ( (graph[v - 1][nb] != -1) && (taken[nb] == false) ) {
-                pq.push( {graph[v - 1][nb], (nb + 1)} );
+        for (tup edge : graph[v - 1]) {
+            ll nb = edge.first;
+            ll weight = edge.second;
+            if (!taken[nb - 1]) {
+                pq.push({weight, nb});
             }
         }
-        
     }
-    // cout << "activate " << activate << " tracker " << tracker << endl;
     return {activate, tracker};
 }
 
@@ -80,30 +75,37 @@ int main(){
 
         cin >> n >> m >> l >> s;
 
-        vector<ll> sources(s);
+        ll sources[s];
         for (ll j = 0; j < s; j++){
             cin >> sources[j];
         }
 
-        vector<vector<ll>>graph(n, vector<ll>(n, -1));
-        for (ll j = 0; j < m; j++){
+        // n + 1 because we need extra node that will be common between all source
+        vector<vector<tup>>graph(n+1);
+        for (ll j = 0; j < m; j++) {
             ll u, v, w;
             cin >> u >> v >> w;
 
-            graph[u - 1][v - 1] = w;
-            graph[v - 1][u - 1] = w;
+            graph[u - 1].emplace_back(v, w);
+            graph[v - 1].emplace_back(u, w);
+        }
+
+        // connect the last(extra) node to the sources
+        for (ll source : sources){
+            graph[n].emplace_back(source, 0);
         }
 
         ll total_energy = 0;
-        for (ll source : sources){
-            tup res = prims(graph, source);
-            ll activate = res.first; ll tracker = res.second;
-            total_energy += activate + ((tracker - 1)*l);
-        }
+        tup res = prims(graph, n + 1);
+        ll activate = res.first; ll tracker = res.second;
+        total_energy += activate + ((tracker - 1)*l);
 
+        // you dont need to transfer the bytes to the initial sources so deduct the energy needed for this for all their edges(s-1)
+        for (ll k = 0; k < s-1; k++){
+            total_energy -= (l);
+        }
         
         cout << (total_energy) << endl;
-
     }
     return 0;
 }
