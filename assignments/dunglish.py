@@ -48,8 +48,14 @@ for i in range(m):
 
     translations[d].append((e, c))
 
-if (d_to_corr_incorr[d][0] + d_to_corr_incorr[d][1]) > 1:
-    multi = True
+
+for d in s:
+    if (d_to_corr_incorr[d][0] + d_to_corr_incorr[d][1]) > 1:
+        multi = True
+
+# for d in d_to_corr_incorr:
+#     if sum(d_to_corr_incorr[d]) > 1:
+#         multi = True
 
 # print(translations)
 # print(d_to_corr_incorr)
@@ -57,18 +63,13 @@ if (d_to_corr_incorr[d][0] + d_to_corr_incorr[d][1]) > 1:
 if multi:
     # count number of total ways to translate for each position in s
     # m * n * ... 
-    total, corrects, incorrects = 1, 1, 1
+    total, corrects = 1, 1
     for i in s:
         total *= (d_to_corr_incorr[i][0] + d_to_corr_incorr[i][1])
         corrects *= d_to_corr_incorr[i][0]
-        incorrects *= d_to_corr_incorr[i][1]
-
-    if corrects >= incorrects:
-        print(corrects, "correct")
-        print(total - corrects, "incorrect")
-    else:
-        print(total - incorrects, "correct")
-        print(incorrects, "incorrect")
+    
+    print(corrects, "correct")
+    print(total - corrects, "incorrect")
 
 else:
     # translate s
@@ -78,7 +79,7 @@ else:
         s_english.append(translations[i][0][0])
         # if translations[i][0][1] == "incorrect":
         # print("d_to_corr_incorr[i][0][1]", d_to_corr_incorr[i][0][1])
-        if d_to_corr_incorr[i][1] == 1:
+        if d_to_corr_incorr[i][1] ==  1:
             incorrect = True
 
     print(*s_english)
