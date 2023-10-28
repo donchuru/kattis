@@ -10,7 +10,7 @@
   and problem solving, but you are not permitted to hunt down solutions to
   these particular problems!
 
-  PyRival Repo
+  PyRival Repo: SAIS
 
   List any classmate you discussed the problem with. Remember, you can only
   have high-level verbal discussions. No code should be shared, developed,
@@ -92,34 +92,17 @@ def SAIS(A):
 
 def burrows(s):
     slen = len(s)
-    # print("slen", slen)
     s += s
     sslen = slen * 2
 
-    s = s + '\0'
-    # print("sslen", sslen)
-
-    # print(len(s))
-
-    # generate suffix array
     sa = SAIS([ord(c) for c in s])
-    print("sa", (sa))
-    # print("sa len", len(sa))
-
-    ## filter out suffixes greater than slen
-    sa2 = []
-    for i in sa:
-        if i < slen:
-            sa2.append(i)
-
-    print("sa2", (sa2))
-    # print("sa2 len", len(sa2))
 
     res = ""
-    for i in sa2:
-        l = (i - 1) % slen
-        res += s[l]
+    for i in range(sslen):
+        if sa[i] < slen:
+            l = sa[i] - 1
+            res += s[l]
     return res
 
 for line in stdin:
-    print(burrows(line.strip()))
+    print(burrows(line.rstrip("\r, \n"))) # don't get rid of whitespace at the beginning.. it is part of s
