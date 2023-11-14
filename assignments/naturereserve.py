@@ -50,7 +50,6 @@ for i in range(ds):
         graph[n+1].append((source, 0))
     
     # print(len(graph))
-
     # print(graph)
 
     total_energy = 0
