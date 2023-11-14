@@ -23,27 +23,43 @@
   END-HEADER
 """
 from sys import stdin, stdout
+from collections import defaultdict
 
-# build our prime table
-def prime_table(n):
-    global pdiv
-    pdiv = list(range(n + 1))
+def factors(n):
+    n_og = n
+    primes = defaultdict(int)
+    p = 2
+    while (p*p) <= n:
+        while n % p == 0:
+            primes[p] += 1
+            n = n // p
+        p += 1
     
-    for p in range(2, n + 1):
-        if pdiv[p] == p: 
-            for q in range(2 * p, n + 1, p):
-                pdiv[q] = p
+    if n > 1:
+        primes[n] += 1
+
+    if primes[n_og] == 1:
+        return False
+    return True
+
 
 for ip in stdin:
     if ip.strip() == "0":
         break
 
     n = int(ip)
-    prime_table(3 * n)
-    
-    n2 = n * 2
-    while pdiv[n2] != n2:
-        n2 += 1
 
-    print(n2)
-        
+    flag = False
+    if factors(n): # if n has factors (is not a prime number)
+        flag = True
+
+    n2 = 2 * n
+    while True:
+        if not factors(n2): # if n2 is a prime number
+            if flag:
+                print(n2, "(%d is not prime)" %n)
+            else:
+                print(n2)
+            break
+
+        n2 += 1
