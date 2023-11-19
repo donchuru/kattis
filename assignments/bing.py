@@ -19,6 +19,7 @@ class TrieNode:
         self.char = char
         self.end = False
         self.children = {} # map of character to node
+        self.counter = 0
 
 class Trie():
     def __init__(self):
@@ -33,12 +34,12 @@ class Trie():
                 new_node = TrieNode(char)
                 node.children[char] = new_node
                 node = new_node
-        
+            node.counter += 1
         node.end = True # mark the last node as the end of a string
         
     def starts_with(self, prefix):
         node = self.root
-        self.cnt = 0 # count number of strings with given prefix
+        # self.cnt = 0 # count number of strings with given prefix
 
         # confirm if the whole string is in the trie already
         for char in prefix:
@@ -46,17 +47,18 @@ class Trie():
                 return 0
             node = node.children[char]
         
+        return node.counter
         # dfs on the subtree of the prefix
-        self.dfs(node)
-        return self.cnt
+        # self.dfs(node)
+        # return self.cnt
     
     # counts the number of strings with the prefix that is the string at the node
-    def dfs(self, node):
-        if node.end:
-            self.cnt += 1
+    # def dfs(self, node):
+        # if node.end:
+        #     self.cnt += 1
         
-        for child in node.children.values():
-            self.dfs(child)
+        # for child in node.children.values():
+        #     self.dfs(child)
 
 trie = Trie()
 N = int(input())
