@@ -16,45 +16,32 @@
 """
 
 class FenwickTree:
-    def __init__(self, n):
-        self.n = n
-        self.ftree = [0] * (self.n + 1)
+    def __init__(self, x):
+        """transform list into BIT"""
+        self.bit = x
+        for i in range(len(x)):
+            j = i | (i + 1)
+            if j < len(x):
+                x[j] += x[i]
 
-    def sum(self, index):
-        out = 0
-        index += 1
-        while index > 0:
-            out += self.ftree[index]
-            index -= index & (-index)
+    def update(self, idx, x):
+        """updates bit[idx] += x"""
+        while idx < len(self.bit):
+            self.bit[idx] += x
+            idx |= idx + 1
 
-        return out
-
-    def update(self, index, delta):
-        index += 1
-        while (index <= self.n):
-            self.ftree[index] += delta
-            index += index & (-index)
-
-    def construct(self, x):
-        for i in range(1, self.n + 1):
-            self.ftree[i] = 0
-
-        for i in range(self.n):
-            self.update(i, x[i])
-
-
-
-    
-    
-    
+    def query(self, end):
+        """calc sum(bit[:end])"""
+        x = 0
+        while end:
+            x += self.bit[end - 1]
+            end &= end - 1
+        return x
 
 N, K = map(int, input().split())
 
-ft = FenwickTree(N)
 x = [0 for i in range(N)]
-ft.construct(x)
-
-print(ft.ftree)
+ft = FenwickTree(x)
 
 for i in range(K):
     query = list(input().split())
@@ -62,14 +49,14 @@ for i in range(K):
     if query[0] == 'F':
         # flip the kth bit
         k = int(query[1]) - 1
-        
-        if ft.ftree[k] == 0:
+      
+        # to get value at x[k], you do the rsq[k+1] - rsq[k]
+        # reminder: rsq => range sum query; so cumulative sum at some index
+        if (ft.query(k+1) - ft.query(k)) == 0:
             ft.update(k, 1)
-        elif ft.ftree[k] == 1:
+        elif (ft.query(k+1) - ft.query(k)) == 1:
             ft.update(k, -1)
-
-        print(ft.ftree)
 
     elif query[0] == 'C':
         j, k = map(int, query[1:])
-        print(ft.sum(k) - ft.sum(j))
+        print(ft.query(k) - ft.query(j-1))
