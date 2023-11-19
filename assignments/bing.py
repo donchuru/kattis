@@ -35,14 +35,6 @@ class Trie():
                 node = new_node
         
         node.end = True # mark the last node as the end of a string
-    
-    # counts the number of strings with the prefix that is the string traced out by the node
-    def dfs(self, node):
-        if node.end:
-            self.cnt += 1
-        
-        for child in node.children.values():
-            self.dfs(child)
         
     def starts_with(self, prefix):
         node = self.root
@@ -57,6 +49,14 @@ class Trie():
         # dfs on the subtree of the prefix
         self.dfs(node)
         return self.cnt
+    
+    # counts the number of strings with the prefix that is the string at the node
+    def dfs(self, node):
+        if node.end:
+            self.cnt += 1
+        
+        for child in node.children.values():
+            self.dfs(child)
 
 trie = Trie()
 N = int(input())
