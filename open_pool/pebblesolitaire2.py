@@ -48,12 +48,6 @@ def solitare(game, rem_pegs):
     
     return dfs(game, rem_pegs)
 
-        
-        
-
-        
-
-
 n = int(input())
 for i in range(n):
     game = list(input())
