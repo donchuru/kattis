@@ -14,6 +14,8 @@
 def solitare(game, rem_pegs):
     min_pegs = float('inf')
     def dfs(game, rem_pegs):
+        nonlocal min_pegs
+
         if rem_pegs == 1:
             return 1
         
@@ -24,7 +26,10 @@ def solitare(game, rem_pegs):
                     game[i+1] = '-'
                     game[i+2] = 'o'
                     game[i] = '-'
-                    dfs(game, rem_pegs - 1)
+                    min_pegs = min(min_pegs, dfs(game, rem_pegs - 1))
+                    game[i+1] = 'o'
+                    game[i+2] = '-'
+                    game[i] = 'o'
 
         # left moves
         for i in range(len(game)-1, -1, -1):
@@ -33,9 +38,11 @@ def solitare(game, rem_pegs):
                     game[i-1] = '-'
                     game[i-2] = 'o'
                     game[i] = '-'
-                    dfs(game, rem_pegs - 1)
+                    min_pegs = min(min_pegs, dfs(game, rem_pegs - 1))
+                    game[i-1] = 'o'
+                    game[i-2] = '-'
+                    game[i] = 'o'
 
-        nonlocal min_pegs
         min_pegs = min(rem_pegs, min_pegs)        
         return min_pegs
     
