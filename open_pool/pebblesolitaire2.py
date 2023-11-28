@@ -11,13 +11,16 @@
   END-HEADER
 """
 
-# gotta remember to make a copy of the board before making changes and recursing on it
-# otherwise, you'll be changing the original board which is not conducive for running the second set of operations (i.e. left moves)
-# 
-# if you do choose to edit the board in place, you should revert your changes back to the original board after your recursive call (dfs)
 def solitare(game, rem_pegs):
     min_pegs = float('inf')
+    hm = dict() # track min no. of pegs to solve for each game arrangement
+
     def dfs(game, rem_pegs):
+        nonlocal min_pegs, hm
+
+        if "".join(game) in hm:
+            return hm["".join(game)]
+        
         if rem_pegs == 1:
             return 1
         
@@ -29,7 +32,7 @@ def solitare(game, rem_pegs):
                     game_copy[i+1] = '-'
                     game_copy[i+2] = 'o'
                     game_copy[i] = '-'
-                    dfs(game_copy, rem_pegs - 1)
+                    min_pegs = min(min_pegs, dfs(game_copy, rem_pegs - 1))
 
         # left moves
         for i in range(len(game)-1, -1, -1):
@@ -39,10 +42,14 @@ def solitare(game, rem_pegs):
                     game_copy[i-1] = '-'
                     game_copy[i-2] = 'o'
                     game_copy[i] = '-'
-                    dfs(game_copy, rem_pegs - 1)
+                    min_pegs = min(min_pegs, dfs(game_copy, rem_pegs - 1))
+    
+        min_pegs = min(rem_pegs, min_pegs)
+        if "".join(game) in hm:
+            hm["".join(game)] =  min(min_pegs, hm["".join(game)])
+        else:
+            hm["".join(game)] =  min_pegs
 
-        nonlocal min_pegs
-        min_pegs = min(rem_pegs, min_pegs)        
         return min_pegs
     
     return dfs(game, rem_pegs)
@@ -51,6 +58,4 @@ n = int(input())
 for i in range(n):
     game = list(input())
     init_pegs = game.count('o')
-    
     print(solitare(game, init_pegs))
-    
