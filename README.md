@@ -1,6 +1,6 @@
-# kattis
-All Kattis problems solved
+# Kattis
+Collection of all programming challenges on Kattis that I've solved
 
-Languages:
-Python 
-C++
+## Languages:
+Python \
+C++ 
